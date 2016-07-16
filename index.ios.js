@@ -24,7 +24,7 @@ global.BORDER_COLOR="#E6E6E6";
 global.RED="#F33030";
 global.BACKGROUND_GREY="#FAFAFA";
 global.TEXT_GREY="rgb(100,100,100)";
-global.TRANSPARENT_GREY="rgba(230,230,230,.9)";
+global.TRANSPARENT_GREY="rgb(220,220,220)";
 global.BUBBLE_GREY='#ECEDF1';
 class TypiInc extends Component {
   render() {

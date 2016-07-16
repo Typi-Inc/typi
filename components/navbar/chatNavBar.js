@@ -10,8 +10,10 @@ import {
 } from 'react-native';
 import navigationActions from '../actions/navigation'
 export default class ChatNavBar extends Component {
+	static contextTypes={getNav:React.PropTypes.func}
 	returnToChats=()=>{
-		navigationActions.push$.next('chats')
+		this.context.getNav().pop()
+		// this.props.back&&this.props.back()
 	}
 	render() {
 		return (

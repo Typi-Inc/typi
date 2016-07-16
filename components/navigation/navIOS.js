@@ -11,10 +11,20 @@ import Tabs from './tabs'
 import Tube from '../chats/tube'
 import connect from '../rx-state/connect'
 import navigationActions from '../actions/navigation'
+let navios;
 class NavIOS extends Component {
+
+	static childContextTypes={getNav:React.PropTypes.func};
+	getChildContext(){
+		return {getNav: this.getNav,
+		}
+	}
+	getNav=()=>{
+		return this.navigator
+	}
 	componentWillUpdate(props){
 		if(props.pushTo==='tube'){
-			console.log('here')
+			// console.log('here')
 
 			this.navigator.push({component:Tube})
 			navigationActions.push$.next('tube reached')
@@ -25,7 +35,9 @@ class NavIOS extends Component {
 			return;
 		}
 	}
+	
 	render() {
+
 		return (
 			<NavigatorIOS
 				ref={el=>this.navigator=el}
@@ -45,3 +57,4 @@ class NavIOS extends Component {
 export default connect(state => ({
 	pushTo: state.getIn(['navigation', 'pushTo'])
 }))(NavIOS)
+

@@ -13,7 +13,7 @@ export default class TabNavBar extends Component {
 		return (
 			<View style={{height:45, left:0,top:0,right:0,
 				backgroundColor:'white',borderColor:'rgb(200,200,200)',
-				borderBottomWidth:.5,flexDirection:'row'}}>
+				borderBottomWidth:this.props.activeTab==='todos'?0:.5,flexDirection:'row'}}>
 				<TextInput
 					autoCorrect={false} 
 					clearButtonMode={'while-editing'}
