@@ -43,7 +43,7 @@ export default class Todos extends Component {
 		);
 	}
 	_renderRow=(row) => {
-		return <Todo item={row}/>
+		return <Todo key={row.id} item={row}/>
 	}
 	_renderQuickActions=() => {
 		return <View style={{ flex: 1,
@@ -58,7 +58,7 @@ export default class Todos extends Component {
 			</View>
 	}
 	_renderSeparator=(sectionID, rowID, adjacentRowHighlighted)=>{
-		return <View key={rowID} style={{marginLeft:60*k,
-			width:260*k,height:0.5,backgroundColor:TRANSPARENT_GREY}}/>
+		return <View key={rowID} style={{marginLeft:40*k,
+			width:280*k,height:0.5,backgroundColor:TRANSPARENT_GREY}}/>
 	}
 }

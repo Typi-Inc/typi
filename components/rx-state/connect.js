@@ -12,12 +12,19 @@ function connect(selector = state => state) {
         )
       }
       shouldComponentUpdate(nextProps, nextState){
+        // let t0 = performance.now();
+        // shallowCompare(this, nextProps, nextState);
+        // let t1 = performance.now();
+        // console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
+
         return shallowCompare(this, nextProps, nextState)
       }
       componentDidMount() {
+        // console.log(`mounging ${WrappedComponent}`)
         this.componentHasMounted = true
       }
       componentWillUnmount() {
+        // console.log('unmoungin')
         this.subscription.unsubscribe()
       }
       render() {

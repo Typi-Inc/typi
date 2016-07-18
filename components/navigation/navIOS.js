@@ -12,6 +12,7 @@ import Tube from '../chats/tube'
 import connect from '../rx-state/connect'
 import navigationActions from '../actions/navigation'
 let navios;
+import SearchScreen from '../search/searchScreen'
 class NavIOS extends Component {
 
 	static childContextTypes={getNav:React.PropTypes.func};
@@ -39,6 +40,7 @@ class NavIOS extends Component {
 	render() {
 
 		return (
+		<View style={{flex:1}}>
 			<NavigatorIOS
 				ref={el=>this.navigator=el}
 				navigationBarHidden
@@ -51,6 +53,8 @@ class NavIOS extends Component {
 		        }}
 		        style={{flex: 1}}
 		    />
+		    <SearchScreen/>
+		</View>
 		);
 	}
 }

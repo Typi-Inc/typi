@@ -20,7 +20,7 @@ export default class TodosContainer extends Component {
 		return (
 			<View style={{...center,flex:1}}>
 				<SegmentedControlIOS
-					style={{width:280*k,}}
+					style={{width:270*k,}}
 					tintColor='black'
 					values={['To me', 'From me']}
 					selectedIndex={this.props.selectedIndex}

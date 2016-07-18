@@ -13,6 +13,16 @@ import Tube from '../chats/tube'
 import Icon from 'react-native-vector-icons/Ionicons'
 export default class Todo extends Component {
 	static contextTypes={getNav:React.PropTypes.func};
+
+	//lifecycles methods
+
+	// shouldComponentUpdate(nextProps,nextState,nextContext){
+	// 	console.log(nextProps,'that was props-=-=-=-=-=-=-=-=',nextState)
+	// 	return false
+	// }
+	// componentWillUpdate(){
+		// console.log('mounting agian')
+	// }
 	//Navigation goes here
 	visitTodo=()=>{
 		this.context.getNav().push({component:Tube})
@@ -34,6 +44,7 @@ export default class Todo extends Component {
   		return this.props.item.uri
   	}
 
+
   	//UI related changes goes here
 
 
@@ -41,8 +52,8 @@ export default class Todo extends Component {
 		return (
 			<TouchableHighlight onPress={this.visitTodo} underlayColor={'rgb(180,180,180)'}>
 				<View style={{flexDirection:'row',alignItems:'center',padding:10,backgroundColor:'white',height:60}}>
-					<View style={{flex:k>1?.8:1,}}>
-						<View style={{height:30,width:30,borderRadius:5,borderWidth:1,borderColor:'rgb(200,200,200)'}}>
+					<View style={{flex:k>1?.7:.9,}}>
+						<View style={{height:25,width:25,borderRadius:5,borderWidth:1,borderColor:'rgb(190,190,190)'}}>
 
 						</View>
 					</View>
