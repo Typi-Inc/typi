@@ -15,10 +15,13 @@ import {keyboard} from '../animations'
 export default class ClockButton extends Component {
 	_onPress=()=>{
 		// console.log('here')
-		if(!this.props.showDatePicker) dismissKeyboard()
+		if(!this.props.showDatePicker) {
+			dismissKeyboard()
+			if(this.props.messageType===-1) creationActions.setMessageType$.next(0)
+
+		}
 		LayoutAnimation.configureNext(keyboard)
 		creationActions.showDatePicker$.next(!this.props.showDatePicker)
-
 	}
 	render() {
 		return (

@@ -13,8 +13,9 @@ export default creationReducer= actions => Observable.merge(
 		state.setIn(['newMessage','deliveryDate'],date)),
 
 	actions.showDatePicker$.map(showDatePicker=>state=>
-		state.set('showDatePicker',showDatePicker))
+		state.set('showDatePicker',showDatePicker)),
 
-
+	actions.setMessageType$.map(type=>state=>
+		state.setIn(['newMessage','type'],type)),
 	
 )

@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 });
 import state$ from './rx-state/state'
 import MainInput from './input/mainInput'
-state$.subscribe(state=>console.log(state.toJS()))
+// state$.subscribe(state=>console.log(state.toJS()))
 export default class App extends Component {
   render() {
     return (

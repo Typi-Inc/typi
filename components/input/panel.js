@@ -10,15 +10,37 @@ import {
   Animated
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'
-import navigationActions from '../actions/navigation'
-export default class Panel extends Component {
-
+import creationActions from '../actions/creation'
+import moment from 'moment'
+import connect from '../rx-state/connect'
+class Panel extends Component {
+	static defaultProps = {
+		messageType:0
+	}
 	show=()=>{
-		Animated.spring(this.anim,{toValue:1,tension:120,friction:12}).start()
+		Animated.spring(this.anim,{toValue:1,tension:130,friction:14}).start()
 	}
 	hide=()=>{
-		Animated.timing(this.anim,{toValue:0,duration:1}).start()
+		Animated.timing(this.anim,{toValue:0,duration:1}).start(()=>{
+			creationActions.showDatePicker$.next(false)
+			creationActions.setMessageType$.next(-1)
+		})
 	}
+	_setMessageType=(event)=>{
+		creationActions
+			.setMessageType$
+				.next(event.nativeEvent.selectedSegmentIndex)
+	}
+
+	displayDate=(date)=>{
+		const d = moment(date)
+      	return d.format('D MMM YYYY')
+	}
+	displayTime=(time)=>{
+		const d=moment(time)
+		return d.format('h:mm A')
+	}
+
 	componentWillReceiveProps(nextProps){
 		if(nextProps.showDatePicker){
 			this.show()
@@ -29,6 +51,8 @@ export default class Panel extends Component {
 		this.anim=this.anim || new Animated.Value(0)
 		const {
 			keyboardSpacerHeight,
+			messageType,
+			deliveryDate,
 			viewHeight} = this.props
 		let bottom=this.anim.interpolate({inputRange:[0,1],
 			outputRange:[keyboardSpacerHeight,keyboardSpacerHeight+viewHeight]})
@@ -53,21 +77,21 @@ export default class Panel extends Component {
 				}}
 			>
 				<View style={{...center,position:'absolute',left:10,top:5}}>
-					<Text style={{color:'rgb(110,110,110)',fontSize:13,marginBottom:5}} >
-						18/01/2016
+					<Text style={{color:'rgb(110,110,110)',fontWeight:'500',
+							fontSize:13,marginBottom:5}} >
+						{this.displayDate(deliveryDate)}
 					</Text>
-					<Text style={{color:'rgb(110,110,110)',fontSize:13}}>
-						12:34 AM
+					<Text style={{color:'rgb(110,110,110)',
+								fontWeight:'500',fontSize:13}}>
+						{this.displayTime(deliveryDate)}
 					</Text>
 				</View>
 				<SegmentedControlIOS
-						style={{width:150*k,marginLeft:20*k}}
+						style={{width:145*k,marginLeft:20*k}}
 						tintColor='black'
 						values={['Message', 'Todo']}
-						selectedIndex={1}
-						onChange={(event) => {
-						  navigationActions.setTodosSelectedIndex$.next(event.nativeEvent.selectedSegmentIndex);
-						}}
+						selectedIndex={messageType}
+						onChange={this._setMessageType}
 					/>
 				<TouchableOpacity
                     style={{ 
@@ -79,7 +103,7 @@ export default class Panel extends Component {
                     	position:'absolute',
                     	paddingTop:2,
                     	borderRadius:4,
-                    	backgroundColor:'rgb(160,160,160)'
+                    	backgroundColor:'rgb(130,130,130)'
 
                     }}
                     onPress={this.hide}
@@ -98,3 +122,7 @@ export default class Panel extends Component {
 		);
 	}
 }
+export default connect(state=>({
+	deliveryDate:state.getIn(['newMessage','deliveryDate']),
+}))(Panel)
+

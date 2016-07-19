@@ -24,6 +24,15 @@ class DatePicker extends Component {
 	// shouldComponentUpdate(nextProps,nextState){
 	// 	// if(nextProps.)
 	// }
+	getDatePickerType=()=>{
+		if(this.props.messageType===0){
+			return 'datetime'
+		}else if(this.props.messageType===1){
+			return 'date'
+		}else{
+			return 'datetime'
+		}
+	}
 	_onDateChange=(date)=>{
 		if (date < new Date) creationActions.futureMessageDate$.next(new Date)
 		else creationActions.futureMessageDate$.next(date)
@@ -52,7 +61,7 @@ class DatePicker extends Component {
 	                style={{ width: 320 * k }}
 	                ref={el => this.datePicker = el}
 	                date={this.props.deliveryDate}
-	                mode="date"
+	                mode={this.getDatePickerType()}
 	                timeZoneOffsetInMinutes={(-1) * (new Date()).getTimezoneOffset()}
 	                onDateChange={this._onDateChange}
 	              />
@@ -62,6 +71,7 @@ class DatePicker extends Component {
 }
 export default connect(state=>({
 	deliveryDate:state.getIn(['newMessage','deliveryDate']),
-	showDatePicker:state.get('showDatePicker')
+	showDatePicker:state.get('showDatePicker'),
+	messageType:state.getIn(['newMessage','type'])
 }))(DatePicker)
 

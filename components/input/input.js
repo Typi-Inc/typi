@@ -12,17 +12,27 @@ import creationActions from '../actions/creation'
 class Input extends Component {
 	static defaultProps = {
 	  text:'',
-	  inputHeight:0
+	  inputHeight:0,
+	  messageType:'Message'
 	}
 	componentWillReceiveProps(nextProps){
 		if(!nextProps.showDatePicker) this.textInput.focus()
+	}
+	getPlaceholderText=()=>{
+		if(this.props.messageType===0){
+			return 'Message to the future'
+		}else if(this.props.messageType===1){
+			return 'Create a todo due on...'
+		}else{
+			return 'Message'
+		}
 	}
 	render() {
 		return (
 			<TextInput
       			multiline={true}
       			ref={el=>this.textInput=el}
-      			placeholder={'Message'}
+      			placeholder={this.getPlaceholderText()}
             	placeholderTextColor={'rgb(160,160,160)'}
            	 	style={{height: Math.max(32, this.props.inputHeight+4*k),
             		fontSize:16,
@@ -56,6 +66,7 @@ export default connect(state => ({
 	inputHeight: state.getIn(['newMessage','inputInfo','inputHeight']),
 	addHeight: state.getIn(['newMessage','inputInfo','addHeight']),
 	showDatePicker:state.get('showDatePicker'),
+	messageType:state.getIn(['newMessage','type'])
 }))(Input)
 
 

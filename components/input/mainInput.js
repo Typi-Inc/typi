@@ -42,20 +42,24 @@ class MainInput extends Component {
 		const {
 			keyboardSpacerHeight,
 			showDatePicker,
-			inputHeight} = this.props
+			inputHeight,
+			messageType
+		} = this.props
 		const viewHeight=Math.max(43, (12 * k + inputHeight))
 
 		return (
 		<View>
-			<Panel showDatePicker={showDatePicker}
-				 viewHeight={viewHeight} 
+			<Panel 
+				messageType={messageType}
+				showDatePicker={showDatePicker}
+				viewHeight={viewHeight} 
 				keyboardSpacerHeight={keyboardSpacerHeight}/>
 			<View
 				style={{
 					position:'absolute',
 					zIndex:10,
 					bottom:keyboardSpacerHeight,
-					left:0,right:0,//borderTopWidth:0.5,
+					left:0,right:0,borderTopWidth:0.5,
 					borderColor:TRANSPARENT_GREY,
 					backgroundColor:'white',
 					height:viewHeight,
@@ -63,7 +67,7 @@ class MainInput extends Component {
 					alignItems:'center',justifyContent:'flex-start',
 				}}
 			>
-				<ClockButton showDatePicker={showDatePicker}/>
+				<ClockButton messageType={messageType} showDatePicker={showDatePicker}/>
 				<Input/>
 
 			</View>
@@ -76,6 +80,7 @@ class MainInput extends Component {
 export default connect(state=>({
 	inputHeight: state.getIn(['newMessage','inputInfo','inputHeight']),
 	keyboardSpacerHeight:state.get('keyboardSpacerHeight'),
-	showDatePicker: state.get('showDatePicker')
+	showDatePicker: state.get('showDatePicker'),
+	messageType:state.getIn(['newMessage','type'])
 }))(MainInput)
 

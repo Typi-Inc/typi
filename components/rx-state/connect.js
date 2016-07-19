@@ -28,6 +28,7 @@ function connect(selector = state => state) {
         this.subscription.unsubscribe()
       }
       render() {
+        
         return (
           <WrappedComponent ref={el => this.component = el} {...this.state} {...this.props} />
         )
