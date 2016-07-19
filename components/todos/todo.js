@@ -1,5 +1,5 @@
 
-
+import TimerMixin from 'react-timer-mixin'
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -11,8 +11,9 @@ import {
 } from 'react-native';
 import Tube from '../chats/tube'
 import Icon from 'react-native-vector-icons/Ionicons'
+import Todos from './todos'
 export default class Todo extends Component {
-	static contextTypes={getNav:React.PropTypes.func};
+	static contextTypes={topNav:React.PropTypes.func};
 
 	//lifecycles methods
 
@@ -25,7 +26,9 @@ export default class Todo extends Component {
 	// }
 	//Navigation goes here
 	visitTodo=()=>{
-		this.context.getNav().push({component:Tube})
+		// this.props.killSearch&&this.props.killSearch()
+		this.context.topNav().push({component:Todos})
+
 	}
 
 
@@ -78,3 +81,4 @@ export default class Todo extends Component {
 		);
 	}
 }
+Object.assign(Todo.prototype, TimerMixin);

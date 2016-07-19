@@ -10,11 +10,13 @@ import {
   TouchableOpacity,
   LayoutAnimation,
   Animated,
+  InteractionManager,
   View
 } from 'react-native';
+import Input from '../input/input'
 import TimerMixin from 'react-timer-mixin';
-
-import Tube from './tube'
+import ChatItem from './chatItem'
+import SwipeActions from './swipeActions'
 import navigationActions from '../actions/navigation'
 import SwipeableListView from 'SwipeableListView'
 import SwipeableQuickActionButton from 'SwipeableQuickActionButton'
@@ -33,28 +35,28 @@ export default class ChatList extends Component {
 	  super(props);
 	
 	  this.state = {ds:new SwipeableListView.getNewDataSource(),
-	  	show:true
+	  	show:true,
+	  	renderPlaceholder:true
 	  };
 	}
-	static contextTypes={getNav:React.PropTypes.func};
+	
 	componentWillMount(){
 		this.anim=this.anim || new Animated.Value(0)
-		this.setState({ds:this.state.ds.cloneWithRowsAndSections({s1:data},["s1"],null)})
+		// this.setState({ds:this.state.ds.cloneWithRowsAndSections({s1:data},["s1"],null)})
+		this.setState({renderPlaceholder:true,ds:this.state.ds.cloneWithRowsAndSections({s1:data},["s1"],null)})
 	}
 
-	visitTube=() => {
-		// navigationActions.push$.next('tube')
-		this.context.getNav().push({component:Tube})
-
-	}
+	
 	deleteRow= () => {
 
 	}
 	render() {
 
 		return (
-	<View style={{flex:1}}>
+	<View style={{flex:1,backgroundColor:'white'}}>
 		<SwipeableListView
+			keyboardShouldPersistTaps={true}
+			keyboardDismissMode={'none'}
 			maxSwipeDistance={100}
 			automaticallyAdjustContentInsets={false}
 			dataSource={this.state.ds}
@@ -62,65 +64,19 @@ export default class ChatList extends Component {
 			renderQuickActions={this._renderQuickActions}
 			renderSeparator={this._renderSeparator}
 		/>
-		<Animated.View ref={el=>this.green=el} style={{position:'absolute',
-			bottom:this.anim.interpolate({inputRange:[0,1],outputRange:[-550,0]}),
-			left:0, right:0,height:500,
-			backgroundColor:'white'}}>
-			{this.state.show?
-				<Tube back={this._test}/>:null
-			}
-		</Animated.View>
 	</View>
 		);
 	}
 	_renderRow=(row) => {
-		return <TouchableHighlight key={row.id} onPress={this.visitTube} underlayColor={'rgb(180,180,180)'}>
-			 <View style={{alignItems:'center',flexDirection:'row',height:80,backgroundColor:'white'}}>
-				<Image style={{height:60,width:60,margin:10,borderRadius:30}}
-					source={{uri:row.uri}}/>
-				<Text>{row.name}</Text>
-			</View>
-		</TouchableHighlight>
+		return <ChatItem item={row}/>
 	}
 	_renderQuickActions=() => {
-		return <View style={{ flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',}}>
-				<View style={{height:80,width:300,backgroundColor:BUBBLE_GREY}}/>
-				<TouchableOpacity onPress={this._test}>
-					<View style={{height:80,width:100,backgroundColor:RED,...center}}>
-						<Text style={{color:'white',fontSize:16}}>Delete</Text>
-					</View>
-				</TouchableOpacity>
-			</View>
+		return <SwipeActions/>
 	}
 	_renderSeparator=(sectionID, rowID, adjacentRowHighlighted)=>{
 		return <View key={rowID} style={{marginLeft:60*k,
 			width:260*k,height:0.5,backgroundColor:TRANSPARENT_GREY}}/>
 	}
-	_test=()=>{
-				// this.setState({show:!this.state.show})
-
-		Animated.spring(this.anim,{
-				toValue:this.anim._value>0?0:1,
-				tension:80,
-				friction:11,
-				useNativeDriver:true
-
-			}).start(()=>{
-
-			})
-			
-			// this.setTimeout(()=>{
-			// 	LayoutAnimation.configureNext(openAnimation)
-			// 	this.green.setNativeProps({style:{bottom:0}})
-			// },100)
-			
-	
-
-		
-		
-	}	
 
 }
 Object.assign(ChatList.prototype, TimerMixin);

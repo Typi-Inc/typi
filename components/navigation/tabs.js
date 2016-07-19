@@ -24,7 +24,6 @@ class Tabs extends Component {
 		// console.log(this.props.navigator)
 		return (
 	<View style={{flex:1}}>
-		<TabNavBar activeTab={this.props.activeTab}/>
 		<TabNavigator
 			tabBarStyle={{backgroundColor:'rgb(245,245,245)'}}
 		>
@@ -36,7 +35,7 @@ class Tabs extends Component {
 				renderIcon={() => <Image  style={{height:25,width:25}} source={{uri:'chats',isStatic:true}} />}
 				renderSelectedIcon={() => <Image style={{height:25,width:25}} source={{uri:'chatsA',isStatic:true}} />}
 				onPress={() => navigationActions.setTab$.next("chats")}>
-					<ChatList navigator={this.props.navigator}/>
+					<ChatList/>
 			</TabNavigator.Item>
 			<TabNavigator.Item
 				selected={this.props.activeTab === 'todos'}

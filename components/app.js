@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { TabViewAnimated, TabViewPage, TabBarTop } from 'react-native-tab-view';
 import TabBar from './dummy/tabBar';
-import NavIOS from './navigation/navIOS';
+import TopNavIOS from './navigation/topNavIOS';
 import ScrollableTabBar from './dummy/scrollableTabBar';
 const styles = StyleSheet.create({
   container: {
@@ -15,11 +15,15 @@ const styles = StyleSheet.create({
   },
 });
 import state$ from './rx-state/state'
-// state$.subscribe(state=>console.log(state.toJS()))
+import MainInput from './input/mainInput'
+state$.subscribe(state=>console.log(state.toJS()))
 export default class App extends Component {
   render() {
     return (
-     <NavIOS/>
+    <View style={{flex:1}}>
+      <ScrollView/>
+     <MainInput/>
+     </View>
     );
   }
 }

@@ -11,10 +11,12 @@ import Tabs from './tabs'
 import Tube from '../chats/tube'
 import connect from '../rx-state/connect'
 import navigationActions from '../actions/navigation'
-let navios;
+import TabNavBar from '../navbar/tabNavBar'
 import SearchScreen from '../search/searchScreen'
 class NavIOS extends Component {
-
+	static defaultProps= {
+		activeTab:'todos'
+	}
 	static childContextTypes={getNav:React.PropTypes.func};
 	getChildContext(){
 		return {getNav: this.getNav,
@@ -38,27 +40,28 @@ class NavIOS extends Component {
 	}
 	
 	render() {
-
+		// console.log(this.props.navigator)
 		return (
 		<View style={{flex:1}}>
+			<TabNavBar activeTab={this.props.activeTab}/>
+
 			<NavigatorIOS
 				ref={el=>this.navigator=el}
 				navigationBarHidden
 				interactivePopGestureEnabled
-				itemWrapperStyle={{paddingTop:20}}
 		        initialRoute={{
 		          component: Tabs,
 		          title: 'My Initial Scene',
 		          // passProps:{navigator:this.navigator}
 		        }}
-		        style={{flex: 1}}
+		        style={{flex: 1,zIndex:2}}
 		    />
-		    <SearchScreen/>
 		</View>
 		);
 	}
 }
 export default connect(state => ({
-	pushTo: state.getIn(['navigation', 'pushTo'])
+	pushTo: state.getIn(['navigation', 'pushTo']),
+	activeTab: state.getIn(['navigation', 'activeTab'])
 }))(NavIOS)
 

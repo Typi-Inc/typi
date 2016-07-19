@@ -9,6 +9,7 @@ import {
   View
 } from 'react-native';
 import Todo from './todo'
+import SwipeActions from './swipeActions'
 import SwipeableListView from 'SwipeableListView'
 const data=[{id:1,name:"Ilyas",text:"hello how is it", uri:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwrPejL8jdaLj3mT3ctMeOaNMMFA_Kzsuvk4Pz5nBA69CkU73D"},
 	{id:2,name:"Almas",text:"well lets go and watch the movies ", uri:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0VnUvIIiJZdm9a-Dt7xYMmrKGGyke5dK1aSXItcGEN4G_iP-v2A"},
@@ -33,6 +34,8 @@ export default class Todos extends Component {
 	render() {
 		return (
 		<SwipeableListView
+			keyboardShouldPersistTaps={true}
+			keyboardDismissMode={'on-drag'}
 			maxSwipeDistance={80}
 			automaticallyAdjustContentInsets={false}
 			dataSource={this.state.ds}
@@ -43,19 +46,10 @@ export default class Todos extends Component {
 		);
 	}
 	_renderRow=(row) => {
-		return <Todo key={row.id} item={row}/>
+		return <Todo killSearch={this.props.killSearch} key={row.id} item={row}/>
 	}
 	_renderQuickActions=() => {
-		return <View style={{ flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',}}>
-				<View style={{height:60,width:300,backgroundColor:BUBBLE_GREY}}/>
-				<TouchableOpacity onPress={this._test}>
-					<View style={{height:60,width:80,backgroundColor:RED,...center}}>
-						<Text style={{color:'white',fontSize:16}}>Delete</Text>
-					</View>
-				</TouchableOpacity>
-			</View>
+		return <SwipeActions/>
 	}
 	_renderSeparator=(sectionID, rowID, adjacentRowHighlighted)=>{
 		return <View key={rowID} style={{marginLeft:40*k,

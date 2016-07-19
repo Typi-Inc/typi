@@ -13,7 +13,7 @@ import ChatNavBar from '../navbar/chatNavBar'
 export default class Tube extends Component {
 	render() {
 		return (
-			<View style={{flex:1}}>
+			<View style={{flex:1,zIndex:100}}>
 				<ChatNavBar back={this.props.back}/>
 				<ScrollView>
 				

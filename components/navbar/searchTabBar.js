@@ -5,6 +5,7 @@ const {
   Text,
   View,
   Animated,
+  TouchableWithoutFeedback
 } = ReactNative;
 const Button = require('../../node_modules/react-native-scrollable-tab-view/Button');
 
@@ -38,7 +39,7 @@ const SearchTabBar = React.createClass({
     const textColor = isTabActive ? activeTextColor : inactiveTextColor;
     const fontWeight = isTabActive ? '500' : '500';
 
-    return <Button
+    return <TouchableWithoutFeedback
       style={{flex: 1}}
       key={name}
       accessible={true}
@@ -48,10 +49,10 @@ const SearchTabBar = React.createClass({
     >
       <View style={[styles.tab, this.props.tabStyle]}>
         <Text style={[{color: textColor, fontWeight, }, textStyle, ]}>
-          {name+' ('+Math.round(Math.random()*100)+')'}
+          {name}
         </Text>
       </View>
-    </Button>;
+    </TouchableWithoutFeedback>;
   },
 
   render() {
@@ -68,6 +69,7 @@ const SearchTabBar = React.createClass({
     const left = this.props.scrollValue.interpolate({
       inputRange: [0, 1, ], outputRange: [0,  containerWidth / numberOfTabs, ],
     });
+    // console.log(this.props.scrollValue)
 
     return (
       <View style={[styles.tabs, {backgroundColor: this.props.backgroundColor, }, this.props.style, ]}>
