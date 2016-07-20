@@ -27,8 +27,10 @@ export default class Todo extends Component {
 	//Navigation goes here
 	visitTodo=()=>{
 		// this.props.killSearch&&this.props.killSearch()
+		// console.log(this.context.topNav().navigationContext)
+		// console.log('here')
 		this.context.topNav().push({component:Todos})
-
+		// console.log(this.context.topNav().navigationContext)
 	}
 
 

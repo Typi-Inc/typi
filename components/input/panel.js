@@ -59,7 +59,6 @@ class Panel extends Component {
 		return (
 			<Animated.View
 				style={{
-					zIndex:4,
 					flexDirection:'row',
 					height:48,
 					backgroundColor:'white',

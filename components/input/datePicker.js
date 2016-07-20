@@ -39,7 +39,7 @@ class DatePicker extends Component {
 	}
 	show(){
 		this.datePicker.setNativeProps({style:{bottom:0}})
-		creationActions.keyboardSpacerHeight$.next(230)
+		creationActions.keyboardSpacerHeight$.next(216)
 	}
 	hide(){
 		this.datePicker.setNativeProps({style:{bottom:-230}})
@@ -50,7 +50,7 @@ class DatePicker extends Component {
 			 <View
               ref={el => this.datePicker = el}
               style={{
-              	zIndex:9,
+              	backgroundColor:'white',
                 position: 'absolute',
                 bottom: -230,
                 left: 0,

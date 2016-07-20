@@ -20,10 +20,7 @@ import MainInput from './input/mainInput'
 export default class App extends Component {
   render() {
     return (
-    <View style={{flex:1}}>
-      <ScrollView/>
-     <MainInput/>
-     </View>
+    <TopNavIOS/>
     );
   }
 }

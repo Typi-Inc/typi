@@ -9,10 +9,14 @@ import {
   View
 } from 'react-native';
 import navigationActions from '../actions/navigation'
+import creationActions from '../actions/creation'
 export default class ChatNavBar extends Component {
 	static contextTypes={getNav:React.PropTypes.func,topNav:React.PropTypes.func}
 	returnToChats=()=>{
+		creationActions.showDatePicker$.next(false)
+		creationActions.messageInput$.next({text:''})
 		this.context.topNav().pop()
+
 		// this.props.back&&this.props.back()
 	}
 	render() {
