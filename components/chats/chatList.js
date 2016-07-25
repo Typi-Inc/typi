@@ -17,7 +17,6 @@ import Input from '../input/input'
 import TimerMixin from 'react-timer-mixin';
 import ChatItem from './chatItem'
 import SwipeActions from './swipeActions'
-import navigationActions from '../actions/navigation'
 import SwipeableListView from 'SwipeableListView'
 import SwipeableQuickActionButton from 'SwipeableQuickActionButton'
 import SwipeableQuickActions from 'SwipeableQuickActions'

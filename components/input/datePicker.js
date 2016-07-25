@@ -5,15 +5,16 @@ import {
   StyleSheet,
   Text,
   View,
-  DatePickerIOS
+  DatePickerIOS,
+  InteractionManager
 } from 'react-native';
-import connect from '../rx-state/connect'
-import creationActions from '../actions/creation'
+import {connect} from 'rx-state'
 class DatePicker extends Component {
 	static defaultProps = {
 	  deliveryDate:new Date,
 	  showDatePicker:false
 	}
+	state={loading:true}
 	componentWillReceiveProps(nextProps){
 		if(nextProps.showDatePicker){
 			this.show()
@@ -24,6 +25,11 @@ class DatePicker extends Component {
 	// shouldComponentUpdate(nextProps,nextState){
 	// 	// if(nextProps.)
 	// }
+	componentWillMount(){
+		InteractionManager.runAfterInteractions(()=>{
+			this.setState({loading:false})
+		})
+	}
 	getDatePickerType=()=>{
 		if(this.props.messageType===0){
 			return 'datetime'
@@ -34,18 +40,20 @@ class DatePicker extends Component {
 		}
 	}
 	_onDateChange=(date)=>{
-		if (date < new Date) creationActions.futureMessageDate$.next(new Date)
-		else creationActions.futureMessageDate$.next(date)
+		if (date < new Date) this.props.futureMessageDate(new Date)
+		else this.props.futureMessageDate(date)
 	}
 	show(){
 		this.datePicker.setNativeProps({style:{bottom:0}})
-		creationActions.keyboardSpacerHeight$.next(216)
+		this.props.setKeyboardSpacerHeight(216)
 	}
 	hide(){
-		this.datePicker.setNativeProps({style:{bottom:-230}})
-		// creationActions.keyboardSpacerHeight$.next(0)
+		this.datePicker&&this.datePicker.setNativeProps({style:{bottom:-230}})
 	}
 	render() {
+		if(this.state.loading){
+			return null
+		}
 		return (
 			 <View
               ref={el => this.datePicker = el}
@@ -61,7 +69,7 @@ class DatePicker extends Component {
 	                style={{ width: 320 * k }}
 	                ref={el => this.datePicker = el}
 	                date={this.props.deliveryDate}
-	                mode={this.getDatePickerType()}
+	                mode={'datetime'}
 	                timeZoneOffsetInMinutes={(-1) * (new Date()).getTimezoneOffset()}
 	                onDateChange={this._onDateChange}
 	              />
@@ -69,9 +77,12 @@ class DatePicker extends Component {
 		);
 	}
 }
-export default connect(state=>({
-	deliveryDate:state.getIn(['newMessage','deliveryDate']),
-	showDatePicker:state.get('showDatePicker'),
-	messageType:state.getIn(['newMessage','type'])
-}))(DatePicker)
+export default connect(
+	state=>({
+		deliveryDate: state.getIn(['newMessage','deliveryDate']),
+		showDatePicker: state.get('showDatePicker'),
+		messageType: state.getIn(['newMessage','type'])
+	}),
+	['futureMessageDate','setKeyboardSpacerHeight']
+)(DatePicker)
 

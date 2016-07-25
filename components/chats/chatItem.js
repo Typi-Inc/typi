@@ -6,16 +6,22 @@ import {
   Text,
   View,
   Image,
-  TouchableHighlight
+  TouchableHighlight,
 } from 'react-native';
 import Tube from './tube'
-
+import TimerMixin from 'react-timer-mixin'
 export default class ChatItem extends Component {
-	static contextTypes={topNav:React.PropTypes.func};
+	static contextTypes={topNav:React.PropTypes.func,getNav:React.PropTypes.func};
 	visitTube=() => {
 		// navigationActions.push$.next('tube')
-		this.context.topNav().push({component:Tube})
+		this.timer=requestAnimationFrame(()=>{
+			this.context.topNav().push({component:Tube})
 
+		})
+
+	}
+	componentWillUnmount(){
+		clearTimeout(this.timer)
 	}
 	render() {
 		item=this.props.item

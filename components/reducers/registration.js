@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs'
 import realm from '../db'
+import { actionFactory as a } from '../actionFactory'
 
 const SERVER_URL = 'http://localhost:4000/api'
 
@@ -12,12 +13,12 @@ const postData = (resource, data) => Observable.fromPromise(fetch(`${SERVER_URL}
   body: JSON.stringify(data)
 }))
 
-const registrationReducerFn = actions => Observable.merge(
-  actions.register$
+const registrationReducerFn = Observable.merge(
+  a.get('register')
     .flatMap(data => console.log(data) || postData('/register', data))
     .map(response => state => console.log(response) || state),
 
-  actions.verify$
+  a.get('verify')
     .flatMap(data => postData('/verify', data))
     .flatMap(response => Observable.fromPromise(response.json()))
     .map(data => state => {
@@ -30,10 +31,6 @@ const registrationReducerFn = actions => Observable.merge(
       })
       return state
     })
-  // actions.
-  // actions.signup$
-  //   .flatMap(data =>
-  //     Observable.ajax.post(`${SERVER_URL}/users`, data))
 )
 
 export default registrationReducerFn

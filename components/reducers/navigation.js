@@ -1,18 +1,17 @@
 import { Observable } from 'rxjs';
+import { actionFactory as a } from '../actionFactory'
+export default navigationReducer = Observable.merge(
 
-
-export default navigationReducer= actions => Observable.merge(
-
-	actions.setTab$.map(tab => state => 
+	a.get('setTab').map(tab => state => 
 		state.setIn(['navigation','activeTab'], tab)),
 
-	actions.setTodosSelectedIndex$.map(index => state => 
+	a.get('setTodosSelectedIndex').map(index => state => 
 		state.setIn(['navigation','todosSelectedIndex'], index)),
 
-	actions.push$.map(navigationState => state => 
+	a.get('push').map(navigationState => state => 
 		state.setIn(['navigation','pushTo'],navigationState)),
 
-	actions.toggleSearchScreen$.map(isSearchVisible => state =>
+	a.get('toggleSearchScreen').map(isSearchVisible => state =>
 		state.set('searchScreenIsVisible',isSearchVisible)),
 	
 )

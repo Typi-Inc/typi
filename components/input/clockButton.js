@@ -9,7 +9,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'
-import creationActions from '../actions/creation'
+import { actionFactory as a } from '../actionFactory'
 import dismissKeyboard from 'dismissKeyboard'
 import {keyboard} from '../animations'
 export default class ClockButton extends Component {
@@ -17,13 +17,14 @@ export default class ClockButton extends Component {
 		// console.log('here')
 		if(!this.props.showDatePicker) {
 			dismissKeyboard()
-			if(this.props.messageType===-1) creationActions.setMessageType$.next(0)
+			if(this.props.messageType===-1) a.get('setMessageType').next(0)
 
 		}
 		LayoutAnimation.configureNext(keyboard)
-		creationActions.showDatePicker$.next(!this.props.showDatePicker)
+		a.get('setShowDatePicker').next(!this.props.showDatePicker)
 	}
 	render() {
+		console.log(this.props.showDatePicker)
 		return (
 			<TouchableOpacity
 				onPress={this._onPress}

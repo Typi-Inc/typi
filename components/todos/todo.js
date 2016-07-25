@@ -1,5 +1,4 @@
 
-import TimerMixin from 'react-timer-mixin'
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -83,4 +82,3 @@ export default class Todo extends Component {
 		);
 	}
 }
-Object.assign(Todo.prototype, TimerMixin);

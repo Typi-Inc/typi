@@ -11,9 +11,8 @@ import {
 } from 'react-native';
 import Input from './input'
 import ClockButton from './clockButton'
-import connect from '../rx-state/connect'
+import {connect} from 'rx-state'
 import {keyboard} from '../animations'
-import creationActions from '../actions/creation'
 import DatePicker from './datePicker'
 import Panel from './panel'
 class MainInput extends Component {
@@ -24,17 +23,20 @@ class MainInput extends Component {
 	}
 	keyboardWillShow=(event)=>{
 		LayoutAnimation.configureNext(keyboard)
-		creationActions.showDatePicker$.next(false)
-		creationActions.keyboardSpacerHeight$.next(event.endCoordinates.height)
+		this.props.setShowDatePicker(false)
+		this.props.setKeyboardSpacerHeight(event.endCoordinates.height)
 	}
 	keyboardWillHide=(event)=>{
 		LayoutAnimation.configureNext(keyboard)
-		if(this.props.showDatePicker) return
-		else creationActions.keyboardSpacerHeight$.next(0)
+		if(this.props.setShowDatePicker) return
+		else this.props.setKeyboardSpacerHeight(0)
 	}
 	componentWillMount(){
-		this.keyboardWillShowSubscription=Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
-		this.keyboardWillHideSubscription=Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
+		this.props.setKeyboardSpacerHeight(0)
+		this.keyboardWillShowSubscription=Keyboard
+			.addListener('keyboardWillShow', this.keyboardWillShow);
+		this.keyboardWillHideSubscription=Keyboard
+			.addListener('keyboardWillHide', this.keyboardWillHide);
 	}
 	componentWillUnmount(){
 		this.keyboardWillShowSubscription.remove()
@@ -71,7 +73,9 @@ class MainInput extends Component {
 				<ClockButton messageType={messageType} showDatePicker={showDatePicker}/>
 				<Input/>
 
-				<TouchableOpacity style={{marginLeft:k>1?9*k:7,padding:2*k}}>
+				<TouchableOpacity style={{marginLeft:k>1?9*k:7,
+					marginBottom:9,
+					padding:2*k,alignSelf:'flex-end'}}>
 					<Text style={{color:APP_COLOR,fontWeight:'500',
 							fontSize:15*k
 						}}>Send</Text>
@@ -94,9 +98,11 @@ class MainInput extends Component {
 	}
 }
 export default connect(state=>({
-	inputHeight: state.getIn(['newMessage','inputInfo','inputHeight']),
-	keyboardSpacerHeight:state.get('keyboardSpacerHeight'),
-	showDatePicker: state.get('showDatePicker'),
-	messageType:state.getIn(['newMessage','type'])
-}))(MainInput)
+		inputHeight: state.getIn(['newMessage','inputInfo','inputHeight']),
+		keyboardSpacerHeight:state.get('keyboardSpacerHeight'),
+		showDatePicker: state.get('showDatePicker'),
+		messageType:state.getIn(['newMessage','type'])
+	}),
+	['setKeyboardSpacerHeight','setShowDatePicker']
+)(MainInput)
 

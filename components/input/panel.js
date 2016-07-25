@@ -6,30 +6,30 @@ import {
   Text,
   SegmentedControlIOS,
   TouchableOpacity,
+  InteractionManager,
   View,
   Animated
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'
-import creationActions from '../actions/creation'
 import moment from 'moment'
-import connect from '../rx-state/connect'
+import {connect} from 'rx-state'
 class Panel extends Component {
+	state={loading:true}
 	static defaultProps = {
-		messageType:0
+		messageType:0,
+		showDatePicker:false
 	}
 	show=()=>{
 		Animated.spring(this.anim,{toValue:1,tension:130,friction:14}).start()
 	}
 	hide=()=>{
 		Animated.timing(this.anim,{toValue:0,duration:1}).start(()=>{
-			creationActions.showDatePicker$.next(false)
-			creationActions.setMessageType$.next(-1)
+			this.props.setShowDatePicker(false)
+			this.props.setMessageType(-1)
 		})
 	}
 	_setMessageType=(event)=>{
-		creationActions
-			.setMessageType$
-				.next(event.nativeEvent.selectedSegmentIndex)
+		this.props.setMessageType(event.nativeEvent.selectedSegmentIndex)
 	}
 
 	displayDate=(date)=>{
@@ -46,8 +46,16 @@ class Panel extends Component {
 			this.show()
 		}
 	}
+	componentWillMount(){
+		InteractionManager.runAfterInteractions(()=>{
+			this.setState({loading:false})
+		})
+	}
 
 	render() {
+		if(this.state.loading){
+			return null
+		}
 		this.anim=this.anim || new Animated.Value(0)
 		const {
 			keyboardSpacerHeight,
@@ -123,5 +131,5 @@ class Panel extends Component {
 }
 export default connect(state=>({
 	deliveryDate:state.getIn(['newMessage','deliveryDate']),
-}))(Panel)
+}),['setMessageType','setShowDatePicker'])(Panel)
 

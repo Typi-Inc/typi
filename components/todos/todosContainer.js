@@ -8,9 +8,7 @@ import {
   View
 } from 'react-native';
 import Todos from './todos'
-import connect from '../rx-state/connect'
-
-import navigationActions from '../actions/navigation'
+import {connect} from 'rx-state'
 export default class TodosContainer extends Component {
 
 	static defaultProps= {
@@ -25,7 +23,7 @@ export default class TodosContainer extends Component {
 					values={['To me', 'From me']}
 					selectedIndex={this.props.selectedIndex}
 					onChange={(event) => {
-					  navigationActions.setTodosSelectedIndex$.next(event.nativeEvent.selectedSegmentIndex);
+					  this.props.setTodosSelectedIndex(event.nativeEvent.selectedSegmentIndex);
 					}}
 				/>
 				<View style={{height:0.5,backgroundColor:'rgb(200,200,200)',width:320*k,marginTop:10}}/>
@@ -40,4 +38,5 @@ export default class TodosContainer extends Component {
 
 export default connect(state => ({
 	selectedIndex: state.getIn(['navigation', 'todosSelectedIndex'])
-}))(TodosContainer)
+}),['setTodosSelectedIndex'])(TodosContainer)
+

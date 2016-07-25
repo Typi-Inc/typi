@@ -1,10 +1,11 @@
 import { Observable } from 'rxjs'
 import { Socket, Presence } from '../phoenix'
+import { actionFactory as a } from '../actionFactory'
 import realm from '../db'
 import _ from 'lodash'
 
-const socketReducerFn = actions => Observable.merge(
-  actions.connectToUserChannel$.map(({ id, token }) => {
+const socketReducerFn = Observable.merge(
+  a.get('connectToUserChannel').map(({ id, token }) => {
     const socket = new Socket('http://localhost:4000/socket', {
       params: { token },
       logger: (kind, msg, data) => console.log(`${kind}: ${msg}`, data)
@@ -17,24 +18,24 @@ const socketReducerFn = actions => Observable.merge(
     const channel = socket.channel(`users:${id}`)
     channel
       .join()
-      .receive('ok', response => actions.userChannelAfterJoin$.next(response))
-      .receive('error', reason => actions.userChannelError$.next(reason))
-      .receive('timout', () => actions.userChannelError$.next(`The request has
+      .receive('ok', response => a.get('userChannelAfterJoin').next(response))
+      .receive('error', reason => a.get('userChannelError').next(reason))
+      .receive('timout', () => a.get('userChannelError').next(`The request has
         timed out please try againg when you will have internet connection`))
 
-    channel.onError(e => actions.userChannelError$.next(e))
+    channel.onError(e => a.get('userChannelError').next(e))
     channel.onClose(e => console.log("channel closed", e))
 
     channel.on('message', msg => {
-      actions.userChannelMessage$.next(msg)
+      a.get('userChannelMessage').next(msg)
     })
     channel.on('status', payload => {
-      actions.userChannelMessageStatus$.next(payload)
+      a.get('userChannelMessageStatus').next(payload)
     })
     channel.on('typing', payload => {
       console.log('typing information has come')
       console.log(payload)
-      actions.userChannelTyping$.next(payload)
+      a.get('userChannelTyping').next(payload)
     })
     return state => ({
       ...state,
@@ -44,7 +45,7 @@ const socketReducerFn = actions => Observable.merge(
       presences: {}
     })
   }),
-  actions.userChannelTyping$.map(({ chatId, userId, status }) => state => {
+  a.get('userChannelTyping').map(({ chatId, userId, status }) => state => {
     console.log('here it is')
     if (status === 'typing') {
       if (!state.typings) {
@@ -64,18 +65,18 @@ const socketReducerFn = actions => Observable.merge(
     console.log(state.typings)
     return state
   }),
-  // actions.userChannelAfterJoin$.map(response => state => {
+  // a.get('userChannelAfterJoin').map(response => state => {
   //   state.userChannel.on('presence_state', presenceState => {
-  //     actions.presenceState$.next(presenceState)
+  //     a.get('presenceState').next(presenceState)
   //     // Presence.syncState(state.presences, state)
   //   })
   //   state.userChannel.on('presence_diff', diff => {
-  //     actions.presenceDiff$.next(diff)
+  //     a.get('presenceDiff').next(diff)
   //     // Presence.syncDiff(state.presences, diff)
   //   })
   //   return state
   // }),
-  // actions.presenceState$.map(presenceState => state => {
+  // a.get('presenceState').map(presenceState => state => {
   //   console.log('presence shit has come')
   //   console.log(presenceState)
   //   console.log(state.presences)
@@ -83,7 +84,7 @@ const socketReducerFn = actions => Observable.merge(
   //   console.log(state.presences)
   //   return state
   // }),
-  // actions.presenceDiff$.map(diff => state => {
+  // a.get('presenceDiff').map(diff => state => {
   //   console.log('presence diff shit has come')
   //   console.log(diff)
   //   console.log(state.presences)
@@ -91,7 +92,7 @@ const socketReducerFn = actions => Observable.merge(
   //   console.log(state.presences)
   //   return state
   // }),
-  actions.userChannelMessage$.map(msg => state => {
+  a.get('userChannelMessage').map(msg => state => {
     realm.write(() => {
       const chat = realm.objects('Chat').filtered(`id = ${msg.chatId}`)[0]
       chat.messages.push({
@@ -111,34 +112,34 @@ const socketReducerFn = actions => Observable.merge(
       .receive('timeout', () => console.log('Networking issue. Still waiting...'))
     return state
   }),
-  actions.userChannelMessageStatus$.map(({ id, status }) => state => {
+  a.get('userChannelMessageStatus').map(({ id, status }) => state => {
     const message = realm.objects('Message').filtered(`id = ${id}`)[0]
     realm.write(() => {
       message.status = status
     })
     return state
   }),
-  actions.connectToChatChannel$.map(chat => state => {
+  a.get('connectToChatChannel').map(chat => state => {
     const channel = state.socket.channel(`chats:${chat.id}`)
     channel
       .join()
-      .receive('ok', response => actions.chatChannelAfterJoin$.next({ chat, response }))
-      .receive('error', reason => actions.chatChannelError$.next(reason))
-      .receive('timout', () => actions.chatChannelError$.next(`The request has
+      .receive('ok', response => a.get('chatChannelAfterJoin').next({ chat, response }))
+      .receive('error', reason => a.get('chatChannelError').next(reason))
+      .receive('timout', () => a.get('chatChannelError').next(`The request has
         timed out please try againg when you will have internet connection`))
 
-    channel.onError(e => actions.chatChannelError$.next(e))
+    channel.onError(e => a.get('chatChannelError').next(e))
     channel.onClose(e => console.log("channel closed", e))
 
     channel.on('message', msg => {
-      actions.chatChannelMessage$.next({ chat, msg })
+      a.get('chatChannelMessage').next({ chat, msg })
     })
     return {
       ...state,
       chatChannel: channel
     }
   }),
-  actions.chatChannelAfterJoin$.map(({ chat, response }) => state => {
+  a.get('chatChannelAfterJoin').map(({ chat, response }) => state => {
     const messages = realm.objects('Message')
       .filtered(`chatId == ${chat.id} and userId != ${state.userId} and status != "read"`)
     if (!_.isEmpty(messages)) {
@@ -153,7 +154,7 @@ const socketReducerFn = actions => Observable.merge(
     }
     return state
   }),
-  actions.chatChannelMessage$.map(({ chat, msg }) => state => {
+  a.get('chatChannelMessage').map(({ chat, msg }) => state => {
     realm.write(() => {
       chat.messages.push({
         ...msg,
@@ -172,14 +173,14 @@ const socketReducerFn = actions => Observable.merge(
       .receive('timeout', () => console.log('Networking issue. Still waiting...'))
     return state
   }),
-  actions.leaveChatChannel$.map(() => state => {
+  a.get('leaveChatChannel').map(() => state => {
     state.chatChannel.leave()
     return {
       ...state,
       chatChannel: undefined
     }
   }),
-  actions.sendMessage$.map(msg => state => {
+  a.get('sendMessage').map(msg => state => {
     const chat = realm.objects('Chat').filtered(`id = ${msg.chatId}`)[0]
     realm.write(() => {
       chat.messages.push({
@@ -196,13 +197,13 @@ const socketReducerFn = actions => Observable.merge(
         user_id: msg.userId
       })
       .receive('ok', updatedMsg => {
-        actions.receiveMessageResponse$.next(updatedMsg)
+        a.get('receiveMessageResponse').next(updatedMsg)
       })
       .receive('error', reasons => console.log(reasons))
       .receive('timeout', () => console.log('Networking issue. Still waiting...'))
     return state
   }),
-  actions.receiveMessageResponse$.map(updatedMsg => state => {
+  a.get('receiveMessageResponse').map(updatedMsg => state => {
     const message = realm.objects('Message').filtered(`createdAt = ${updatedMsg.createdAt}`)[0]
     realm.write(() => {
       message.id = updatedMsg.id
@@ -210,10 +211,10 @@ const socketReducerFn = actions => Observable.merge(
     })
     return state
   }),
-  actions.sendTypingStatus$
+  a.get('sendTypingStatus')
     .merge(
       // TODO this is not finished
-      actions.sendTypingStatus$
+      a.get('sendTypingStatus')
         .map(() => 'not typing')
         .delay(3000)
     )

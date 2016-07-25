@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
+import { actionFactory as a } from '../actionFactory'
 
+export default navigationReducer = Observable.merge(
 
-export default navigationReducer= actions => Observable.merge(
-
-	actions.appSearchText$.map(text => state => 
+	a.get('appSearchText').map(text => state => 
 		state.setIn(['appSearch','inputText'], text)),
 
 	

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Animated, View, StyleSheet, ScrollView, Image } from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view'
-import connect from '../rx-state/connect'
+import {connect} from 'rx-state'
 import Faces from '../dummy/faces'
 import SearchTabBar from '../navbar/searchTabBar'
 import Todos from '../todos/todos'

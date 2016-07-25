@@ -9,15 +9,13 @@ import {
 } from 'react-native';
 import NavIOS from './navIOS'
 import Tube from '../chats/tube'
-import connect from '../rx-state/connect'
-import navigationActions from '../actions/navigation'
 import TabNavBar from '../navbar/tabNavBar'
 import SearchScreen from '../search/searchScreen'
 const EventEmitter=require('EventEmitter')
+import {actionFactory as a} from '../actionFactory'
 var Subscribable = require('Subscribable');
 import dismissKeyboard from 'dismissKeyboard'
-import creation from '../actions/creation'
-class TopNavIOS extends Component {
+export default class TopNavIOS extends Component {
 	static contextTypes={focusEmitter:React.PropTypes.instanceOf(EventEmitter)};
 	static childContextTypes={topNav:React.PropTypes.func};
 	getChildContext(){
@@ -28,20 +26,34 @@ class TopNavIOS extends Component {
 		return this.topNav
 	}
 	handleFocus=(obj)=>{
-		console.log(`${obj.route.component}`,obj)
+		a.get('setKeyboardSpacerHeight').next(0)
+		// console.log(`${obj.route.component}`,obj)
+		// dismissKeyboard()
+		a.get('setShowDatePicker').next(false)
+		
+		a.get('setMessageType').next(-1)
+	}
+	handleWillFocus=(obj)=>{
 		dismissKeyboard()
-		creation.showDatePicker$.next(false)
-		creation.keyboardSpacerHeight$.next(0)
+
 	}
 	componentDidMount(){
-		// console.log(this.topNav._getFocusEmitter())
-		let jost=this.topNav._getFocusEmitter().addListener('didfocus',this.handleFocus)
-		// console.log(jost)
+		this.didfocus=this.topNav._getFocusEmitter().addListener('didfocus',this.handleFocus)
+		// this.willFocus=this.topNav._getFocusEmitter().addListener('willfocus',this.handleWillFocus)
+	}
+	componentWillUnmount(){
+		this.didfocus.remove()
+		// this.willfocus.remove()
+	}
+	_onNavigationProgress=(e)=>{
+		console.log(e)
 	}
 	render() {
 		return (
 		<View style={{flex:1}}> 
 			<NavigatorIOS
+				// onNavigationProgress={this._onNavigationProgress}
+				// onNavigationComplete={this._onNavigationProgress}
 				ref={el=>this.topNav=el}
 				navigationBarHidden
 				interactivePopGestureEnabled
@@ -58,6 +70,4 @@ class TopNavIOS extends Component {
 		);
 	}
 }
-export default connect(state => ({
-	pushTo: state.getIn(['navigation', 'pushTo'])
-}))(TopNavIOS)
+

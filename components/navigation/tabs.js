@@ -8,8 +8,7 @@ import {
   Image,
   View
 } from 'react-native';
-import connect from '../rx-state/connect'
-import navigationActions from '../actions/navigation'
+import {connect} from 'rx-state'
 import TabNavigator from 'react-native-tab-navigator';
 import TabNavBar from '../navbar/tabNavBar'
 import ChatList from '../chats/chatList'
@@ -34,7 +33,7 @@ class Tabs extends Component {
 				selectedTitleStyle={{color:'black'}}
 				renderIcon={() => <Image  style={{height:25,width:25}} source={{uri:'chats',isStatic:true}} />}
 				renderSelectedIcon={() => <Image style={{height:25,width:25}} source={{uri:'chatsA',isStatic:true}} />}
-				onPress={() => navigationActions.setTab$.next("chats")}>
+				onPress={() => this.props.setTab("chats")}>
 					<ChatList/>
 			</TabNavigator.Item>
 			<TabNavigator.Item
@@ -45,7 +44,7 @@ class Tabs extends Component {
 				renderIcon={() => <Image style={{height:23,width:23}} source={{uri:'todo',isStatic:true}}  />}
 				renderSelectedIcon={() => <Image style={{height:23,width:23}} source={{uri:'todoA',isStatic:true}}  />}
 				// renderBadge={() => <CustomBadgeView />}
-				onPress={() => navigationActions.setTab$.next("todos")}>
+				onPress={() => this.props.setTab("todos")}>
 					<TodosContainer/>
 			</TabNavigator.Item>
 			<TabNavigator.Item
@@ -55,7 +54,7 @@ class Tabs extends Component {
 				selectedTitleStyle={{color:'black'}}
 				renderIcon={() => <Image  style={{height:23,width:23}} source={{uri:'settings',isStatic:true}} />}
 				renderSelectedIcon={() => <Image style={{height:23,width:23}} source={{uri:'settingsA',isStatic:true}} />}
-				onPress={() => navigationActions.setTab$.next("settings")}>
+				onPress={() => this.props.setTab("settings")}>
 				<Settings/>
 			</TabNavigator.Item>
 		</TabNavigator>
@@ -66,4 +65,4 @@ class Tabs extends Component {
 
 export default connect(state => ({
 	activeTab: state.getIn(['navigation', 'activeTab'])
-}))(Tabs)
+}),['setTab'])(Tabs)

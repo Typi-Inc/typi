@@ -8,13 +8,15 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import navigationActions from '../actions/navigation'
-import creationActions from '../actions/creation'
+import dismissKeyboard from 'dismissKeyboard'
+import { actionFactory as a } from '../actionFactory'
 export default class ChatNavBar extends Component {
 	static contextTypes={getNav:React.PropTypes.func,topNav:React.PropTypes.func}
 	returnToChats=()=>{
-		creationActions.showDatePicker$.next(false)
-		creationActions.messageInput$.next({text:''})
+		// dismissKeyboard()
+		// creationActions.showDatePicker$.next(false)
+		a.get('messageInput').next({text:''})
+		// creationActions.keyboardSpacerHeight$.next(0)
 		this.context.topNav().pop()
 
 		// this.props.back&&this.props.back()

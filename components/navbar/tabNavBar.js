@@ -10,43 +10,44 @@ import {
   LayoutAnimation
 } from 'react-native';
 import {openAnimation, fast} from '../animations'
-import navigationActions from '../actions/navigation'
-import connect from '../rx-state/connect'
-import searchActions from '../actions/search'
+import {connect} from 'rx-state'
 import SearchScreen from '../search/searchScreen'
 import Tabs from '../navigation/tabs'
+import NewChat from '../creation/newChat'
 class TabNavBar extends Component {
    	static defaultProps= {
 		text:''
 	}
 	static contextTypes={getNav:React.PropTypes.func};
+	
+
+	_onChangeText=(text)=>{
+		this.props.appSearchText(text)
+	}
 	_onFocus=()=>{
 		this.context.getNav().replace({component:SearchScreen})
-		// navigationActions.setTab$.next("todos")
 		this.main.setNativeProps({style:{borderBottomWidth:0}})
 		LayoutAnimation.configureNext(fast)
-		// navigationActions.toggleSearchScreen$.next(true)
 		this.textInput.setNativeProps({style:{width:240*k}})
 		this.cancel.setNativeProps({style:{fontSize:16,marginBottom:8}})
 	}
-	// _onBlur=()=>{
-	// 	// navigationActions.toggleSearchScreen$.next(false)
-
-	// }
-
-	_onChangeText=(text)=>{
-		searchActions.appSearchText$.next(text)
-	}
 	_onCancel=()=>{
 		this.context.getNav().replace({component:Tabs})
-		this.main.setNativeProps({style:{borderBottomWidth:this.props.activeTab==='todos'?0:0.5}})
+		this.main.setNativeProps({style:{
+			borderBottomWidth:this.props.activeTab==='todos'?0:0.5}})
 		LayoutAnimation.configureNext(fast)
-		// navigationActions.toggleSearchScreen$.next(false)
 		this.textInput.blur()
-		searchActions.appSearchText$.next('')
+		this.props.appSearchText('')
 		this.textInput.setNativeProps({style:{width:260*k}})
 		this.cancel.setNativeProps({style:{fontSize:0.1,marginBottom:20}})
 
+	}
+
+	_onCreate=()=>{
+		LayoutAnimation.configureNext(openAnimation)
+		this.title.setNativeProps({style:{opacity:1,fontSize:17}})
+		this.textInput.setNativeProps({style:{opacity:0,width:120}})
+		this.context.getNav().replace({component:NewChat})
 	}
 	render() {
 		return (
@@ -58,14 +59,28 @@ class TabNavBar extends Component {
 					borderColor:'rgb(200,200,200)',
 					paddingBottom:5,paddingTop:3,
 					borderBottomWidth:this.props.activeTab==='todos'?0:.5,
-					flexDirection:'row'}}>
-				<TextInput
+					flexDirection:'row'}}>		
+				{this.renderTextInput()}
+				{this.renderCreateTitle()}
+				{this.renderCancelButton()}
+
+			</View>
+		);
+	}
+	renderCancelButton=()=>{
+		return <TouchableOpacity onPress={this._onCancel}>
+					<Text 
+						style={{fontSize:0.1,fontWeight:'500',
+
+							marginLeft:18*k,marginBottom:20}} 
+						ref={el=>this.cancel=el}>Cancel</Text>
+				</TouchableOpacity>
+	}
+	renderTextInput=()=>{
+		return 	<TextInput
 					onFocus={this._onFocus}
-					// onBlur={this._onBlur}
 					onChangeText={this._onChangeText}
-
 					value={this.props.text}
-
 					autoCorrect={false} 
 					clearButtonMode={'while-editing'}
 					ref={el => this.textInput = el}
@@ -80,22 +95,24 @@ class TabNavBar extends Component {
                 		borderRadius: 3,
 					}}
 				/>
-
-				<TouchableOpacity onPress={this._onCancel}>
-					<Text 
-						style={{fontSize:0.1,fontWeight:'500',
-
-							marginLeft:18*k,marginBottom:20}} 
-						ref={el=>this.cancel=el}>Cancel</Text>
+	}
+	renderCreateTitle=()=>{
+		if(this.props.activeTab==='chats'){
+			return	<View style={{flexDirection:'row'}}>
+						<Text ref={el=>this.title=el}
+							style={{fontSize:0.1,opacity:0,fontWeight:'500'}}>New messate</Text>
+						<TouchableOpacity  ref={el=>this.do=el} onPress={this._onCreate}>
+						<Text 
+							style={{fontSize:14,fontWeight:'500',
+							marginLeft:18*k,marginBottom:10}} >do</Text>
 				</TouchableOpacity>
-
-
-
 			</View>
-		);
+		}else{
+			return null
+		}
 	}
 }
 export default connect(state => ({
 	text: state.getIn(['appSearch','inputText'])
-}))(TabNavBar)
+}),['appSearchText'])(TabNavBar)
 
